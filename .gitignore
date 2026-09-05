@@ -346,3 +346,6 @@ ASALocalRun/
 healthchecksdb
 # IDA headless analysis state (large, machine-specific)
 .ida-re/
+
+# Assembled release package (build output)
+/release/

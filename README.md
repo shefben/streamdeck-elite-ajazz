@@ -7,6 +7,79 @@ Like macrossmerrell, I'm an explorer.  I needed to make neutron highway plots an
 
 Latest Release: https://github.com/SlayerNZ/streamdeck-elite
 
+---
+
+## 🆕 Ajazz / Mirabox Stream Dock support (AKP153E)
+
+The plugin now runs properly on **Ajazz / Mirabox Stream Dock** decks — the **AKP153E** in
+particular — with the compatibility gaps fixed and **automatic profile switching, which Stream Dock
+does not support on its own, made to work** through a small in-process bridge. Everything is
+additive: the plugin still runs on Elgato Stream Deck exactly as before.
+
+**Grab the Ajazz release, run `Install.bat` as administrator, and you're done.** It installs the
+plugin and artwork, creates the four Elite profiles, installs the bridge next to Stream Dock, and
+patches Stream Dock to load it automatically. `Uninstall.bat` reverses all of it.
+
+| | |
+|---|---|
+| **Deck** | Ajazz AKP153E (15 keys + 3 screen-only displays) |
+| **Software** | Stream Dock AJAZZ **3.10.191.0421** |
+| **OS** | Windows 10 / 11, 64-bit · [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) |
+
+The plugin and its fixes are version-independent. The automatic profile switching is tied to that
+exact Stream Dock build and re-checks a byte signature before doing anything; a Stream Dock update
+turns switching off (the plugin keeps working) until the bridge is re-applied.
+
+### What was broken on Stream Dock, and how it's fixed
+
+Stream Dock re-implements Elgato's plugin protocol, so the same plugin binary loads on both — but
+several things were broken there. All were found by reverse-engineering the host and are verified on
+real hardware.
+
+- **Image and sound pickers never saved — every image button silently did nothing.** Stream Dock
+  intercepts the file dialog and leaves the value as `C:\fakepath\<name>` (filename only, no
+  folder), delivering the real path through a callback the plugin never listened for. So every
+  button needing artwork — 23 button types, ~110 image slots — drew its default icon forever. Fixed
+  by handling Stream Dock's `onFilePickerReturn`; inert on Elgato, so one build works on both.
+- **The plugin crash-looped.** Stream Dock registers one device id and reports a different one for
+  every button, so the library's device lookup returned null and the per-tick handler dereferenced
+  it — killing the plugin process about a second after the first button appeared, on repeat. Fixed
+  by parsing the device list from the registration message and guarding the lookup.
+- **Most buttons were missing from the list.** 25 actions declared no controller type, and Stream
+  Dock only offers actions that declare one. Every action now declares `Keypad`; the readout-only
+  buttons also declare `Information` so they can sit on the AKP153E's **three screen-only displays**
+  — the natural home for the info buttons. (Elgato's schema allows only two controller values, so
+  the installer adds `Information` to the installed copy, not the shared manifest.)
+- **Automatic profile switching did nothing.** The plugin asks the software to change profile
+  (ship / SRV / on foot / fighter) with `switchToProfile`. Elgato acts on it; Stream Dock parses it
+  and raises an internal signal that nothing is connected to. The bundled **bridge**
+  (`sdbridge.dll`) runs inside Stream Dock, watches for the request, and performs the switch through
+  Stream Dock's own profile-change routine — the same call the profile list makes on a click. The
+  installer adds a tiny loader to the Stream Dock executable so the bridge starts with it; the
+  original startup still runs, a backup is kept, and the uninstaller reverses it. The bridge's
+  source (`bridge-native/`), the reverse-engineering trace scripts, and a Frida-based version
+  (`tools/`) are all in this repo.
+
+### New plugin features (these work on Elgato too)
+
+- **Exploration Signals button** — bio/geo signal counts for the body you just resolved in the FSS,
+  as a keypad button. Replaces the Stream Deck + dial's touch-strip readout, which the AKP153E has
+  no hardware for.
+- **Default artwork for every image slot** — a button is usable the moment you drop it, no picking
+  files first. Toggle / Alarm / Limpet / Power / Firegroup choose art from the selected function;
+  Ship / Odyssey Status, Gravity, Route and the rest fill every state; anything without dedicated
+  art falls back to a labelled colour plate, so nothing is ever blank.
+- **Two MIT-licensed community icon sets bundled** ([Rob-Manders](https://github.com/Rob-Manders/elite-dangerous-stream-deck-icons),
+  [Andechs75](https://github.com/Andechs75/Elite-Dangerous-Streamdeck-Icons)) — bundled artwork went
+  from 104 to 334 icons.
+- **Image option on Static and Repeating Static buttons** — they had none; now they take a custom
+  image, with per-function artwork for ~90 Static functions filled in by default.
+- **Automatic, centred, word-wrapped key titles** on Static, Repeating Static, UI Navigation and
+  Firegroup — the key is named after the selected function (Firegroup shows `Fire Group C`), wrapped
+  one word per line so it stays inside the artwork.
+
+---
+
 ## ⚠️ Important: EliteJournalReader Library Upgrade (v4.0.0)
 
 **If you've forked this project and added your own buttons or features, please read this before updating.**
