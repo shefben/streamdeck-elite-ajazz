@@ -1,0 +1,4 @@
+build/*.dll
+build/*.obj
+build/*.exp
+build/*.lib
