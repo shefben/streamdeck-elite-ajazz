@@ -126,12 +126,27 @@ if (!ok) {
     console.log('[bridge] controller: ' + ctrl);
     console.log('[bridge] profiles: ' + Object.keys(items).map(k => '"' + k + '"').join(', '));
 
+    // Cached pointers must be re-validated before use. Stream Dock rebuilds these widgets - on
+    // a rename, an add, or a list refresh - and a stale pointer handed to the selector would be
+    // a use-after-free inside the host. Checking the vtable still matches, and that the object
+    // still answers to the name we cached it under, is cheap next to that.
+    function stillValid(obj, vftRva) {
+        try {
+            return obj && !obj.isNull() && obj.readPointer().equals(at(vftRva));
+        } catch (e) {
+            return false;
+        }
+    }
+
     function switchTo(name) {
-        if (!ctrl) ctrl = findCtrl();
+        if (!stillValid(ctrl, RVA.ctrlVft)) ctrl = findCtrl();
         if (!ctrl) { console.log('[bridge] no controller found'); return false; }
 
-        if (!(name in items)) items = findItems();   // profile may have been added since
-        const item = items[name];
+        let item = items[name];
+        if (!stillValid(item, RVA.itemVft) || nameOf(item) !== name) {
+            items = findItems();
+            item = items[name];
+        }
         if (!item) {
             console.log('[bridge] no profile named "' + name + '" - have: ' +
                 Object.keys(items).join(', '));
@@ -151,8 +166,14 @@ if (!ok) {
     }
 
     // The dispatcher calls the handler with the profile QString as the 5th argument.
+    // Calling the selector re-enters the host's own signal machinery, so guard against the
+    // switch itself somehow arriving back here and recursing.
+    let busy = false;
+
     Interceptor.attach(switchHandler, {
         onEnter(args) {
+            if (busy) return;
+
             let name = null;
             try { name = qstr(args[4].readPointer()); } catch (e) { }
             if (!name) {
@@ -160,10 +181,13 @@ if (!ok) {
                 return;
             }
             console.log('[bridge] plugin requested profile "' + name + '"');
+            busy = true;
             try {
                 switchTo(name);
             } catch (e) {
                 console.log('[bridge] switch failed: ' + e);
+            } finally {
+                busy = false;
             }
         }
     });
