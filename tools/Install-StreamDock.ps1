@@ -25,6 +25,12 @@
 
 .PARAMETER NoRestart
     Leave Stream Dock closed after installing.
+
+.PARAMETER CreateProfiles
+    Also create the Elite Main / OnFoot / InSRV / InFighter profiles that automatic profile
+    switching needs. The plugin switches by name and ships no profiles of its own, so without
+    these the switching silently does nothing. Requires python on PATH; backs up the profile
+    store and DataCache.db first.
 #>
 
 [CmdletBinding()]
