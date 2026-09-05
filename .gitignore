@@ -344,3 +344,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+# IDA headless analysis state (large, machine-specific)
+.ida-re/
