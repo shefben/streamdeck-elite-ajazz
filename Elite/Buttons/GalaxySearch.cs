@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -185,11 +185,21 @@ namespace Elite.Buttons
             if (payload.Settings == null || payload.Settings.Count == 0)
             {
                 settings = PluginSettings.CreateDefaultSettings();
+
+                // A button dropped for the first time arrives with no settings at all, so seed the
+                // default artwork here too - otherwise it stays blank until something else saves.
+                DefaultImages.Apply(settings, "galaxysearch");
+
                 Connection.SetSettingsAsync(JObject.FromObject(settings)).Wait();
             }
             else
             {
                 settings = payload.Settings.ToObject<PluginSettings>();
+
+                if (DefaultImages.Apply(settings, "galaxysearch"))
+                {
+                    Connection.SetSettingsAsync(JObject.FromObject(settings)).Wait();
+                }
                 InitializeSettings();
             }
 
@@ -276,6 +286,11 @@ namespace Elite.Buttons
         public override void ReceivedSettings(ReceivedSettingsPayload payload)
         {
             BarRaider.SdTools.Tools.AutoPopulateSettings(settings, payload.Settings);
+
+            if (DefaultImages.Apply(settings, "galaxysearch"))
+            {
+                Connection.SetSettingsAsync(JObject.FromObject(settings)).Wait();
+            }
             InitializeSettings();
             Connection.SetSettingsAsync(JObject.FromObject(settings)).Wait();
             AsyncHelper.RunSync(HandleDisplay);

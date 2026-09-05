@@ -43,6 +43,14 @@
 
         </select>
     </div>
+    <div class="sdpi-item" id="dvImage">
+        <div class="sdpi-item-label" onclick="clearFileName('image');">Image</div>
+        <div class="sdpi-item-group file" id="filepickerimage">
+            <input class="sdpi-item-value sdProperty sdFile" type="file" id="image" accept=".jpg, .jpeg, .png, .ico, .gif, .bmp, .tiff" oninput="setSettings()">
+            <label class="sdpi-file-info " for="image" id="imageFilename">No file...</label>
+            <label class="sdpi-file-label" for="image">Choose file...</label>
+        </div>
+    </div>
 </div>
 </body>
 </html>

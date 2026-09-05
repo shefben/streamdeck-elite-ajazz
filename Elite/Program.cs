@@ -1255,6 +1255,8 @@ namespace Elite
 
             Profile.ReadProfiles();
 
+            Profile.ReadHostDevices(args);
+
 
             SDWrapper.Run(args);
         }

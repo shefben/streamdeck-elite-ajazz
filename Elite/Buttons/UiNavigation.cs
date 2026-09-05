@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -251,6 +251,14 @@ namespace Elite.Buttons
         public override void ReceivedSettings(ReceivedSettingsPayload payload)
         {
             BarRaider.SdTools.Tools.AutoPopulateSettings(settings, payload.Settings);
+
+            // Name the key after the function that was just picked, so a plain colour
+            // plate still says what the button does.
+            var autoTitle = FunctionTitles.For("uinavigation", settings.Function);
+            if (!string.IsNullOrEmpty(autoTitle))
+            {
+                Connection.SetTitleAsync(autoTitle).Wait();
+            }
             HandleFileNames();
         }
 

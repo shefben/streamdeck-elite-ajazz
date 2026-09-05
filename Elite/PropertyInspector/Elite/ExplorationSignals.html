@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+    <title>Exploration Signals</title>
+    <link rel="stylesheet" href="../sdpi.css">
+    <script src="../sdtools.common.js"></script>
+    <script src="../jquery-3.3.1.min.js"></script>
+</head>
+<body>
+    <div class="sdpi-wrapper">
+
+        <details class="message">
+            <summary>Shows the biological and geological signal counts for the body you just resolved in the FSS, falling back to the body you are currently at. This is the keypad version of the Exploration Dial's touch strip readout, for decks with no touch strip.</summary>
+        </details>
+
+        <div type="color" class="sdpi-item">
+            <div class="sdpi-item-label">Body Name</div>
+            <input class="sdpi-item-value sdProperty" type="color" id="nameColor" oninput="setSettings()">
+        </div>
+
+        <div type="color" class="sdpi-item">
+            <div class="sdpi-item-label">Bio Count</div>
+            <input class="sdpi-item-value sdProperty" type="color" id="bioColor" oninput="setSettings()">
+        </div>
+
+        <div type="color" class="sdpi-item">
+            <div class="sdpi-item-label">Geo Count</div>
+            <input class="sdpi-item-value sdProperty" type="color" id="geoColor" oninput="setSettings()">
+        </div>
+
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">No Signals</div>
+            <div class="sdpi-item-value">
+                <div class="sdpi-item-child">
+                    <input class="sdProperty sdCheckbox" id="hideWhenEmpty" type="checkbox" value="" oninput="setSettings()">
+                    <label for="hideWhenEmpty"><span></span>Show the key's default image instead of dashes</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="sdpi-item" id="dvBackgroundImage">
+            <div class="sdpi-item-label" onclick="clearFileName('backgroundImage');">Background</div>
+            <div class="sdpi-item-group file" id="filepickergroup1">
+                <input class="sdpi-item-value sdProperty sdFile" type="file" id="backgroundImage" accept=".jpg, .jpeg, .png, .ico, .gif, .bmp, .tiff" oninput="setSettings()">
+                <label class="sdpi-file-info " for="backgroundImage" id="backgroundImageFilename">No file...</label>
+                <label class="sdpi-file-label" for="backgroundImage">Choose file...</label>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

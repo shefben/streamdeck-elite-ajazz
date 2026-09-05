@@ -343,8 +343,37 @@ namespace Elite.Buttons
             {
                 // Logger.Instance.LogMessage(TracingLevel.DEBUG, "HandleOnTick called");
         
+                // DeviceInfo() resolves the device by matching the id from willAppear against the
+                // list sent at registration, and returns null when there is no match. Stream Dock
+                // (Ajazz/Mirabox) registers one id and then announces a different one in
+                // deviceDidConnect, which every later willAppear uses, so the lookup always fails
+                // there. Dereferencing null would throw out of the library's tick loop, which has
+                // no catch and is async void, killing the whole plugin process - so fall back to
+                // the device list we parsed from the registration payload ourselves.
                 var deviceInfo = connection.DeviceInfo();
-                // Logger.Instance.LogMessage(TracingLevel.DEBUG, $"DeviceType: {deviceInfo.Type} ContainsKey: {Profile.Profiles.ContainsKey(deviceInfo.Type)}");
+
+                var deviceId = deviceInfo?.Id ?? connection.DeviceId;
+
+                DeviceType deviceType;
+
+                if (deviceInfo != null)
+                {
+                    deviceType = deviceInfo.Type;
+                }
+                else
+                {
+                    var fallback = Profile.HostDevices.FirstOrDefault(x => x.Id == deviceId) ??
+                                   Profile.HostDevices.FirstOrDefault();
+
+                    if (fallback == null) return;
+
+                    deviceType = fallback.Type;
+
+                    if (string.IsNullOrEmpty(deviceId)) deviceId = fallback.Id;
+                }
+
+                if (string.IsNullOrEmpty(deviceId)) return;
+                // Logger.Instance.LogMessage(TracingLevel.DEBUG, $"DeviceType: {deviceType} ContainsKey: {Profile.Profiles.ContainsKey(deviceType)}");
         
                 /*
     
@@ -356,13 +385,13 @@ namespace Elite.Buttons
     
     49C5DB3C77BEDDEB4EE9DA88ED76CF59  deviceInfo.Id,  connection.DeviceId*/
 
-                if (!Profile.Profiles.ContainsKey(deviceInfo.Type)) return;
+                if (!Profile.Profiles.ContainsKey(deviceType)) return;
 
-                var profiles = Profile.Profiles[deviceInfo.Type];
+                var profiles = Profile.Profiles[deviceType];
 
-                if (!_lastStatus.ContainsKey(deviceInfo.Id))
+                if (!_lastStatus.ContainsKey(deviceId))
                 {
-                    _lastStatus.Add(deviceInfo.Id, null);
+                    _lastStatus.Add(deviceId, null);
                 }
 
                 try
@@ -448,9 +477,9 @@ namespace Elite.Buttons
                         {
                             idFound = true;
 
-                            if (deviceInfo.Id.Contains(namePart))
+                            if (deviceId.Contains(namePart))
                             {
-                                 limitId = deviceInfo.Id;
+                                 limitId = deviceId;
                             }
                         }
                     }
@@ -463,14 +492,14 @@ namespace Elite.Buttons
                         {
                             var key = string.Join(",", profile.ProfileTypes.Select(x => x.ToString()).ToArray());
 
-                            if (_lastStatus[deviceInfo.Id] != key)
+                            if (_lastStatus[deviceId] != key)
                             {
                                  Logger.Instance.LogMessage(TracingLevel.DEBUG,
                                     "switch profile " + key + " to " +
                                     profile.Name +
-                                    " for " + profile.DeviceType + " " + deviceInfo.Id);
+                                    " for " + profile.DeviceType + " " + deviceId);
 
-                                _lastStatus[deviceInfo.Id] = key;
+                                _lastStatus[deviceId] = key;
 
                                 try
                                 {
@@ -505,24 +534,24 @@ namespace Elite.Buttons
                         {
                             idFound = true;
 
-                            if (deviceInfo.Id.Contains(namePart))
+                            if (deviceId.Contains(namePart))
                             {
-                                limitId = deviceInfo.Id;
+                                limitId = deviceId;
                             }
                         }
                     }
 
                     if (!idFound || !string.IsNullOrEmpty(limitId))
                     {
-                        if (_lastStatus[deviceInfo.Id] != Profile.ProfileType.Main.ToString())
+                        if (_lastStatus[deviceId] != Profile.ProfileType.Main.ToString())
                         {
                             Logger.Instance.LogMessage(TracingLevel.DEBUG,
                                 "switch profile " + Profile.ProfileType.Main +
                                 " to " +
                                 p.Name + " for " +
-                                p.DeviceType + " " + deviceInfo.Id);
+                                p.DeviceType + " " + deviceId);
 
-                            _lastStatus[deviceInfo.Id] = Profile.ProfileType.Main.ToString();
+                            _lastStatus[deviceId] = Profile.ProfileType.Main.ToString();
 
                             try
                             {

@@ -206,11 +206,21 @@ namespace Elite.Buttons
             if (payload.Settings == null || payload.Settings.Count == 0)
             {
                 settings = PluginSettings.CreateDefaultSettings();
+
+                // A button dropped for the first time arrives with no settings at all, so seed the
+                // default artwork here too - otherwise it stays blank until something else saves.
+                DefaultImages.Apply(settings, "latlonginfo");
+
                 Connection.SetSettingsAsync(JObject.FromObject(settings)).Wait();
             }
             else
             {
                 settings = payload.Settings.ToObject<PluginSettings>();
+
+                if (DefaultImages.Apply(settings, "latlonginfo"))
+                {
+                    Connection.SetSettingsAsync(JObject.FromObject(settings)).Wait();
+                }
                 InitializeSettings();
                 AsyncHelper.RunSync(HandleDisplay);
             }
@@ -241,6 +251,11 @@ namespace Elite.Buttons
         public override void ReceivedSettings(ReceivedSettingsPayload payload)
         {
             BarRaider.SdTools.Tools.AutoPopulateSettings(settings, payload.Settings);
+
+            if (DefaultImages.Apply(settings, "latlonginfo"))
+            {
+                Connection.SetSettingsAsync(JObject.FromObject(settings)).Wait();
+            }
             InitializeSettings();
             AsyncHelper.RunSync(HandleDisplay);
         }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BarRaider.SdTools;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Elite
 {
@@ -597,6 +598,54 @@ namespace Elite
             if (profileList.Any())
             {
                 Profiles.Add(streamDeckDeviceType, profileList);
+            }
+        }
+
+        public class HostDevice
+        {
+            public string Id { get; set; }
+            public DeviceType Type { get; set; }
+        }
+
+        /// <summary>
+        /// The devices the host listed in the -info payload at registration. Kept so profile
+        /// switching still knows the device type when SDConnection.DeviceInfo() cannot resolve it,
+        /// which is the normal case on Stream Dock (Ajazz/Mirabox): it registers one device id and
+        /// then announces a different one, and every willAppear afterwards carries the second.
+        /// </summary>
+        public static List<HostDevice> HostDevices = new List<HostDevice>();
+
+        public static void ReadHostDevices(string[] args)
+        {
+            try
+            {
+                var index = Array.FindIndex(args, x => string.Equals(x, "-info", StringComparison.OrdinalIgnoreCase));
+
+                if (index < 0 || index + 1 >= args.Length) return;
+
+                var devices = JObject.Parse(args[index + 1])["devices"] as JArray;
+
+                if (devices == null) return;
+
+                foreach (var device in devices)
+                {
+                    var id = (string)device["id"];
+
+                    if (string.IsNullOrEmpty(id)) continue;
+
+                    HostDevices.Add(new HostDevice
+                    {
+                        Id = id,
+                        Type = (DeviceType)(int)(device["type"] ?? 0)
+                    });
+                }
+
+                Logger.Instance.LogMessage(TracingLevel.INFO, "Registered devices : " +
+                    string.Join(", ", HostDevices.Select(x => x.Id + " " + x.Type)));
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.LogMessage(TracingLevel.ERROR, "ReadHostDevices " + ex);
             }
         }
 

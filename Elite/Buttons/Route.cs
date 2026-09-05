@@ -172,6 +172,11 @@ namespace Elite.Buttons
                 //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Route Constructor #1");
 
                 settings = PluginSettings.CreateDefaultSettings();
+
+                // A button dropped for the first time arrives with no settings at all, so seed the
+                // default artwork here too - otherwise it stays blank until something else saves.
+                DefaultImages.Apply(settings, "route");
+
                 Connection.SetSettingsAsync(JObject.FromObject(settings)).Wait();
 
             }
@@ -180,6 +185,11 @@ namespace Elite.Buttons
                 //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Route Constructor #2");
 
                 settings = payload.Settings.ToObject<PluginSettings>();
+
+                if (DefaultImages.Apply(settings, "route"))
+                {
+                    Connection.SetSettingsAsync(JObject.FromObject(settings)).Wait();
+                }
                 InitializeSettings();
 
                 AsyncHelper.RunSync(HandleDisplay);
@@ -271,6 +281,11 @@ namespace Elite.Buttons
 
             // New in StreamDeck-Tools v2.0:
             BarRaider.SdTools.Tools.AutoPopulateSettings(settings, payload.Settings);
+
+            if (DefaultImages.Apply(settings, "route"))
+            {
+                Connection.SetSettingsAsync(JObject.FromObject(settings)).Wait();
+            }
             InitializeSettings();
 
             AsyncHelper.RunSync(HandleDisplay);

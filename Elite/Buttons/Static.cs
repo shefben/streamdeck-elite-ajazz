@@ -24,6 +24,7 @@ namespace Elite.Buttons
                 var instance = new PluginSettings
                 {
                     Function = string.Empty,
+                    ImageFilename = string.Empty,
                     ClickSoundFilename = string.Empty
 				};
 
@@ -34,6 +35,10 @@ namespace Elite.Buttons
             public string Function { get; set; }
 
             [FilenameProperty]
+            [JsonProperty(PropertyName = "image")]
+            public string ImageFilename { get; set; }
+
+            [FilenameProperty]
             [JsonProperty(PropertyName = "clickSound")]
             public string ClickSoundFilename { get; set; }
 
@@ -42,6 +47,7 @@ namespace Elite.Buttons
 
 		PluginSettings settings;
         private CachedSound _clickSound = null;
+        private string _imageBase64;
 
 
 		public Static(SDConnection connection, InitialPayload payload) : base(connection, payload)
@@ -51,6 +57,11 @@ namespace Elite.Buttons
                 //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Static Constructor #1");
 
                 settings = PluginSettings.CreateDefaultSettings();
+
+                // A button dropped for the first time arrives with no settings at all, so seed the
+                // default artwork here too - otherwise it stays blank until something else saves.
+                DefaultImages.Apply(settings, "static", settings.Function);
+
                 Connection.SetSettingsAsync(JObject.FromObject(settings)).Wait();
 
             }
@@ -59,9 +70,47 @@ namespace Elite.Buttons
                 //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Static Constructor #2");
 
                 settings = payload.Settings.ToObject<PluginSettings>();
+
+                if (DefaultImages.Apply(settings, "static"))
+                {
+                    Connection.SetSettingsAsync(JObject.FromObject(settings)).Wait();
+                }
+
                 HandleFileNames();
             }
 
+            HandleDisplay();
+        }
+
+        /// <summary>
+        /// The key image is ours to draw, so push it whenever it might have been reset. The
+        /// library hashes what it last sent and drops an unchanged image, so repeating this on
+        /// every tick costs nothing after the first send.
+        /// </summary>
+        public override void OnTick()
+        {
+            base.OnTick();
+
+            HandleDisplay();
+        }
+
+        private void HandleDisplay()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(_imageBase64))
+                {
+                    Connection.SetDefaultImageAsync().Wait();
+                }
+                else
+                {
+                    Connection.SetImageAsync(_imageBase64).Wait();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.LogMessage(TracingLevel.ERROR, $"Static HandleDisplay: {ex}");
+            }
         }
 
 
@@ -97,11 +146,26 @@ namespace Elite.Buttons
 
             // New in StreamDeck-Tools v2.0:
             BarRaider.SdTools.Tools.AutoPopulateSettings(settings, payload.Settings);
+
+            // Name the key after the function that was just picked, so a plain colour
+            // plate still says what the button does.
+            var autoTitle = FunctionTitles.For("static", settings.Function);
+            if (!string.IsNullOrEmpty(autoTitle))
+            {
+                Connection.SetTitleAsync(autoTitle).Wait();
+            }
+
+            DefaultImages.Apply(settings, "static");
+
             HandleFileNames();
+
+            HandleDisplay();
         }
 
         private void HandleFileNames()
         {
+            _imageBase64 = Tools.FileToBase64(settings.ImageFilename, true);
+
             _clickSound = null;
             if (File.Exists(settings.ClickSoundFilename))
             {

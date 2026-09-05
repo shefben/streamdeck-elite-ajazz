@@ -285,3 +285,57 @@ function fadeColor(col, amt) {
     const b = min(255, max(((num >> 8) & 0x00FF) + amt, 0));
     return '#' + (g | (b << 8) | (r << 16)).toString(16).padStart(6, 0);
 }
+
+/** STREAM DOCK FILE PICKER
+ *
+ * Stream Dock (Ajazz / Mirabox) does not let the browser handle <input type="file">. It opens its
+ * own native dialog and leaves input.value as "C:\fakepath\<name>" - the bare filename, with no
+ * directory - so the path we save is useless and every image and sound setting silently does
+ * nothing. The real absolute path is delivered instead by calling this global, with a JSON array
+ * of paths as a string, e.g. ["M:/images/on.png"].
+ *
+ * Elgato's Stream Deck never calls it, so this is inert there and the normal value path still runs.
+ */
+var sdFilePickerId = '';
+
+document.addEventListener('click', function (event) {
+    var elem = event.target;
+    if (elem && elem.tagName === 'INPUT' && elem.type === 'file') {
+        sdFilePickerId = elem.id;
+    }
+}, true);
+
+function onFilePickerReturn(url) {
+    if (!sdFilePickerId) {
+        return;
+    }
+
+    var paths = url;
+    try {
+        paths = JSON.parse(url);
+    }
+    catch (err) {
+        // Already a plain string - use it as-is.
+    }
+
+    var path = Array.isArray(paths) ? paths[0] : paths;
+    if (!path) {
+        return;
+    }
+
+    // setSettings() reads elem.value first and falls back to this label, and on Stream Dock the
+    // value is the useless fakepath name, so put the real path where the fallback will find it.
+    var elemFile = document.getElementById(sdFilePickerId + 'Filename');
+    if (elemFile) {
+        elemFile.innerText = path;
+    }
+
+    var elem = document.getElementById(sdFilePickerId);
+    if (elem) {
+        elem.value = null;
+    }
+
+    console.log('onFilePickerReturn: ' + sdFilePickerId + ' <= ' + path);
+
+    setSettings();
+}

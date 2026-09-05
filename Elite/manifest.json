@@ -1,8 +1,11 @@
-{
+﻿{
   "Actions": [
     {
       "Icon": "Images/icon",
       "Name": "Heading/Altitude Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -18,6 +21,9 @@
     {
       "Icon": "Images/icon",
       "Name": "Lat/Long Info Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -33,6 +39,9 @@
     {
       "Icon": "Images/icon",
       "Name": "Galaxy Search Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -48,6 +57,9 @@
     {
       "Icon": "Images/icon",
       "Name": "(New) Odyssey Ship Status Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -63,6 +75,9 @@
     {
       "Icon": "Images/icon",
       "Name": "(New) On Foot Exploration Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -78,6 +93,9 @@
     {
       "Icon": "Images/icon",
       "Name": "(New) Route Advanced Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -93,6 +111,9 @@
     {
       "Icon": "Images/icon",
       "Name": "Planetary Gravity Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -108,6 +129,9 @@
     {
       "Icon": "Images/icon",
       "Name": "Navigation Target Info",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -123,6 +147,9 @@
     {
       "Icon": "Images/icon",
       "Name": "Planet Info Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -138,6 +165,9 @@
     {
       "Icon": "Images/icon",
       "Name": "Exobiology Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -153,6 +183,9 @@
     {
       "Icon": "Images/icon",
       "Name": "Alert Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -168,6 +201,9 @@
     {
       "Icon": "Images/icon",
       "Name": "Route Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -183,6 +219,9 @@
     {
       "Icon": "Images/icon",
       "Name": "(Depreciated) Ship Status Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -198,6 +237,9 @@
     {
       "Icon": "Images/icon",
       "Name": "Alarm Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -213,6 +255,9 @@
     {
       "Icon": "Images/icon",
       "Name": "FSS Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -228,6 +273,9 @@
     {
       "Icon": "Images/icon",
       "Name": "Limpet Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -243,6 +291,9 @@
     {
       "Icon": "Images/icon",
       "Name": "Power Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -258,10 +309,13 @@
     {
       "Icon": "Images/icon",
       "Name": "(Updated) Static Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
-          "TitleAlignment": "bottom",
+          "TitleAlignment": "middle",
           "FontSize": "8"
         }
       ],
@@ -273,10 +327,13 @@
     {
       "Icon": "Images/icon",
       "Name": "UI Navigation Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
-          "TitleAlignment": "bottom",
+          "TitleAlignment": "middle",
           "FontSize": "8"
         }
       ],
@@ -288,10 +345,13 @@
     {
       "Icon": "Images/icon",
       "Name": "Repeating Static Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
-          "TitleAlignment": "bottom",
+          "TitleAlignment": "middle",
           "FontSize": "8"
         }
       ],
@@ -303,6 +363,9 @@
     {
       "Icon": "Images/icon",
       "Name": "Toggle Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -318,6 +381,9 @@
     {
       "Icon": "Images/icon",
       "Name": "Firegroup Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Default",
@@ -371,6 +437,24 @@
       "PropertyInspectorPath": "PropertyInspector/Elite/FireGroupDial.html"
     },
     {
+      "Icon": "Images/icon",
+      "Name": "Exploration Signals Button",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "Images/Default",
+          "TitleAlignment": "bottom",
+          "FontSize": "8"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Elite Dangerous Exploration Signals Button - bio and geo signal counts for the body resolved in the FSS. Keypad version of the Exploration Dial touch strip, for decks without one.",
+      "UUID": "com.mhwlng.elite.explorationsignals",
+      "PropertyInspectorPath": "PropertyInspector/Elite/ExplorationSignals.html"
+    },
+    {
       "Icon": "Images/pluginIcon",
       "Name": "Exploration Dial (FSS / DSS)",
       "Controllers": [
@@ -393,6 +477,9 @@
     {
       "Icon": "Images/Neutron Star",
       "Name": "Neutron Plot (3 info rows)",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Neutron Star",
@@ -408,6 +495,9 @@
     {
       "Icon": "Images/Neutron Star",
       "Name": "Neutron Plot (2 info rows)",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Neutron Star",
@@ -423,6 +513,9 @@
     {
       "Icon": "Images/Neutron Star",
       "Name": "Navigation Info Button",
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
         {
           "Image": "Images/Neutron Star",

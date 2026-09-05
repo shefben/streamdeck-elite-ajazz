@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -306,11 +306,21 @@ namespace Elite.Buttons
             if (payload.Settings == null || payload.Settings.Count == 0)
             {
                 _settings = PluginSettings.CreateDefaultSettings();
+
+                // A button dropped for the first time arrives with no settings at all, so seed the
+                // default artwork here too - otherwise it stays blank until something else saves.
+                DefaultImages.Apply(_settings, "navtarget");
+
                 Connection.SetSettingsAsync(JObject.FromObject(_settings)).Wait();
             }
             else
             {
                 _settings = payload.Settings.ToObject<PluginSettings>();
+
+                if (DefaultImages.Apply(_settings, "navtarget"))
+                {
+                    Connection.SetSettingsAsync(JObject.FromObject(_settings)).Wait();
+                }
                 InitializeSettings();
                 AsyncHelper.RunSync(HandleDisplay);
             }
@@ -368,6 +378,11 @@ namespace Elite.Buttons
         public override void ReceivedSettings(ReceivedSettingsPayload payload)
         {
             BarRaider.SdTools.Tools.AutoPopulateSettings(_settings, payload.Settings);
+
+            if (DefaultImages.Apply(_settings, "navtarget"))
+            {
+                Connection.SetSettingsAsync(JObject.FromObject(_settings)).Wait();
+            }
             InitializeSettings();
             AsyncHelper.RunSync(HandleDisplay);
         }
