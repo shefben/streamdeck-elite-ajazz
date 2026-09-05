@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Profile Cycle Test</title></head>
+<body>
+<script>
+/*
+ * Cycle the Elite profiles on a timer, to prove profile switching works without running the game.
+ *
+ * The Elite plugin only calls SwitchProfileAsync while EliteDangerous64 is running, so the
+ * switching path is otherwise untestable at a desk. This sends exactly the same event -
+ * switchToProfile with the profile name - on a fixed interval.
+ *
+ * Stream Dock ignores that event on its own, so with no bridge attached nothing will happen and
+ * the profile will sit still. That is the control case, and it is worth seeing once.
+ * With tools/run-profile-bridge.py running, the deck should change profile on each tick.
+ */
+
+'use strict';
+
+var INTERVAL_MS = 15000;
+var PROFILES = ['Elite Main', 'Elite OnFoot', 'Elite InSRV', 'Elite InFighter'];
+
+var ws = null;
+var uuid = '';
+var deviceId = null;
+var index = 0;
+
+function log(msg) {
+    try {
+        ws.send(JSON.stringify({ event: 'logMessage', payload: { message: '[cycle] ' + msg } }));
+    } catch (e) { }
+    try { console.log('[cycle] ' + msg); } catch (e) { }
+}
+
+function tick() {
+    if (!ws || ws.readyState !== 1) return;
+
+    var name = PROFILES[index % PROFILES.length];
+    index++;
+
+    var msg = {
+        event: 'switchToProfile',
+        context: uuid,
+        payload: { profile: name }
+    };
+    if (deviceId) msg.device = deviceId;
+
+    log('requesting "' + name + '"');
+    ws.send(JSON.stringify(msg));
+}
+
+function connectElgatoStreamDeckSocket(port, inUUID, registerEvent, info) {
+    uuid = inUUID;
+
+    try {
+        var devices = JSON.parse(info).devices || [];
+        if (devices.length) deviceId = devices[0].id;
+    } catch (e) { }
+
+    ws = new WebSocket('ws://127.0.0.1:' + port);
+
+    ws.onopen = function () {
+        ws.send(JSON.stringify({ event: registerEvent, uuid: inUUID }));
+        log('registered; cycling ' + PROFILES.length + ' profiles every ' +
+            (INTERVAL_MS / 1000) + 's');
+        setInterval(tick, INTERVAL_MS);
+        setTimeout(tick, 5000);
+    };
+
+    ws.onmessage = function (e) {
+        var m = JSON.parse(e.data);
+        // deviceDidConnect carries the id the host actually uses for this deck, which is not
+        // always the one advertised at registration.
+        if (m.event === 'deviceDidConnect' && m.device) deviceId = m.device;
+    };
+}
+
+var connectSocket = connectElgatoStreamDeckSocket;
+</script>
+</body>
+</html>

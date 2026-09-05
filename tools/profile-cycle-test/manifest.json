@@ -1,0 +1,32 @@
+{
+ "Actions": [
+  {
+   "Icon": "Images/icon",
+   "Name": "Profile Cycle Test",
+   "Controllers": [ "Keypad" ],
+   "States": [ { "Image": "Images/icon", "TitleAlignment": "middle", "FontSize": "10" } ],
+   "SupportedInMultiActions": false,
+   "Tooltip": "Cycles the Elite profiles on a timer to test profile switching",
+   "UUID": "com.elite.profiletest.cycle",
+   "PropertyInspectorPath": "plugin/pi.html"
+  }
+ ],
+ "Author": "diagnostic",
+ "Description": "Sends switchToProfile on a timer, to verify profile switching without running the game",
+ "Name": "Profile Cycle Test",
+ "Icon": "Images/icon",
+ "URL": "https://example.invalid",
+ "Version": "1.0.0",
+ "CodePath": "plugin/index.html",
+ "Category": "Diagnostics",
+ "CategoryIcon": "Images/icon",
+ "OS": [ { "Platform": "windows", "MinimumVersion": "10" } ],
+ "SDKVersion": 2,
+ "Software": { "MinimumVersion": "2.9" },
+ "Profiles": [
+  { "Name": "Elite Main", "DeviceType": 0, "ReadOnly": false, "DontAutoSwitchWhenInstalled": false },
+  { "Name": "Elite OnFoot", "DeviceType": 0, "ReadOnly": false, "DontAutoSwitchWhenInstalled": false },
+  { "Name": "Elite InSRV", "DeviceType": 0, "ReadOnly": false, "DontAutoSwitchWhenInstalled": false },
+  { "Name": "Elite InFighter", "DeviceType": 0, "ReadOnly": false, "DontAutoSwitchWhenInstalled": false }
+ ]
+}
