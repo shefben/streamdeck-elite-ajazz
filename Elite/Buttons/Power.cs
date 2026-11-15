@@ -126,21 +126,21 @@ namespace Elite.Buttons
                             StreamDeckCommon.SendKeypress(Program.Binding[BindingType.Srv].IncreaseSystemsPower_Buggy, repeatCount);
                         else
                             StreamDeckCommon.SendKeypress(Program.Binding[BindingType.Ship].IncreaseSystemsPower, repeatCount);
-                        EliteData.StatusData.Pips[0] = 8;
+
                         break;
                     case "ENG":
                         if (EliteData.StatusData.InSRV)
                             StreamDeckCommon.SendKeypress(Program.Binding[BindingType.Srv].IncreaseEnginesPower_Buggy, repeatCount);
                         else
                             StreamDeckCommon.SendKeypress(Program.Binding[BindingType.Ship].IncreaseEnginesPower, repeatCount);
-                        EliteData.StatusData.Pips[1] = 8;
+
                         break;
                     case "WEP":
                         if (EliteData.StatusData.InSRV)
                             StreamDeckCommon.SendKeypress(Program.Binding[BindingType.Srv].IncreaseWeaponsPower_Buggy, repeatCount);
                         else
                             StreamDeckCommon.SendKeypress(Program.Binding[BindingType.Ship].IncreaseWeaponsPower, repeatCount);
-                        EliteData.StatusData.Pips[2] = 8;
+
                         break;
                 }
 
@@ -275,33 +275,6 @@ namespace Elite.Buttons
             AsyncHelper.RunSync(HandleDisplay);
         }
 
-        private void AdjustPips(int index)
-        {
-            if (EliteData.StatusData.Pips[index] < 8)
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    if (i != index)
-                    {
-                        EliteData.StatusData.Pips[i]--;
-                    }
-                    else
-                    {
-                        EliteData.StatusData.Pips[i] += 2;
-                    }
-
-                    if (EliteData.StatusData.Pips[i] < 0)
-                    {
-                        EliteData.StatusData.Pips[i] = 0;
-                    }
-                    else if (EliteData.StatusData.Pips[i] > 8)
-                    {
-                        EliteData.StatusData.Pips[i] = 8;
-                    }
-                }
-            }
-        }
-
         public override void KeyPressed(KeyPayload payload)
         {
             if (StreamDeckCommon.InputRunning || Program.Binding == null)
@@ -321,32 +294,27 @@ namespace Elite.Buttons
                         StreamDeckCommon.SendKeypress(Program.Binding[BindingType.Srv].IncreaseSystemsPower_Buggy);
                     else
                         StreamDeckCommon.SendKeypress(Program.Binding[BindingType.Ship].IncreaseSystemsPower);
-                    AdjustPips(0);
+
                     break;
                 case "ENG":
                     if (EliteData.StatusData.InSRV)
                         StreamDeckCommon.SendKeypress(Program.Binding[BindingType.Srv].IncreaseEnginesPower_Buggy);
                     else
                         StreamDeckCommon.SendKeypress(Program.Binding[BindingType.Ship].IncreaseEnginesPower);
-                    AdjustPips(1);
+
                     break;
                 case "WEP":
                     if (EliteData.StatusData.InSRV)
                         StreamDeckCommon.SendKeypress(Program.Binding[BindingType.Srv].IncreaseWeaponsPower_Buggy);
                     else
                         StreamDeckCommon.SendKeypress(Program.Binding[BindingType.Ship].IncreaseWeaponsPower);
-                    AdjustPips(2);
+
                     break;
                 case "RST":
                     if (EliteData.StatusData.InSRV)
                         StreamDeckCommon.SendKeypress(Program.Binding[BindingType.Srv].ResetPowerDistribution_Buggy);
                     else
                         StreamDeckCommon.SendKeypress(Program.Binding[BindingType.Ship].ResetPowerDistribution);
-
-                    EliteData.StatusData.Pips[0] = 4;
-                    EliteData.StatusData.Pips[1] = 4;
-                    EliteData.StatusData.Pips[2] = 4;
-
                     break;
             }
 

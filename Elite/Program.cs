@@ -35,7 +35,7 @@ namespace Elite
         public KeyBindingWatcher(string path, string fileName)
         {
             Filter = fileName;
-            NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.LastWrite;
+            NotifyFilter = NotifyFilters.FileName | NotifyFilters.CreationTime | NotifyFilters.LastWrite;
             Path = path;
         }
 
@@ -48,6 +48,10 @@ namespace Elite
 
             Changed -= UpdateStatus;
             Changed += UpdateStatus;
+            Created -= UpdateStatus;
+            Created += UpdateStatus;
+            Renamed -= UpdateStatus;
+            Renamed += UpdateStatus;
 
             EnableRaisingEvents = true;
         }
@@ -59,6 +63,8 @@ namespace Elite
                 if (EnableRaisingEvents)
                 {
                     Changed -= UpdateStatus;
+                    Created -= UpdateStatus;
+                    Renamed -= UpdateStatus;
 
                     EnableRaisingEvents = false;
                 }
@@ -306,7 +312,8 @@ namespace Elite
                         {
                             return null;
                         }
-                        return bindsNames.Split('\n');
+                        return bindsNames.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(name => name.Trim()).Where(name => name.Length > 0).ToArray();
 
                     }
                 }
@@ -331,134 +338,15 @@ namespace Elite
             }
 
 
-            var fileName = Path.Combine(bindingsPath, bindsName + ".4.2.binds");
-
-            if (!File.Exists(fileName))
-            {
-                Logger.Instance.LogMessage(TracingLevel.ERROR, "file not found " + fileName);
-
-                fileName = fileName.Replace(".4.2.binds", ".4.1.binds");
-
-                if (!File.Exists(fileName))
-                {
-                    Logger.Instance.LogMessage(TracingLevel.ERROR, "file not found " + fileName);
-
-                    fileName = fileName.Replace(".4.1.binds", ".4.0.binds");
-
-                    if (!File.Exists(fileName))
-                    {
-                        Logger.Instance.LogMessage(TracingLevel.ERROR, "file also not found " + fileName);
-
-                        fileName = fileName.Replace(".4.0.binds", ".3.0.binds");
-
-                        if (!File.Exists(fileName))
-                        {
-                            Logger.Instance.LogMessage(TracingLevel.ERROR, "file also not found " + fileName);
-
-                            fileName = fileName.Replace(".3.0.binds", ".binds");
-
-                            if (!File.Exists(fileName))
-                            {
-                                Logger.Instance.LogMessage(TracingLevel.ERROR, "file also not found " + fileName);
-                            }
-                        }
-                    }
-                }
-            }
-
-            // steam
-            if (!File.Exists(fileName))
-            {
-                bindingsPath = SteamPath.FindSteamEliteDirectory();
-
-                if (!string.IsNullOrEmpty(bindingsPath))
-                {
-                    fileName = Path.Combine(bindingsPath, bindsName + ".4.2.binds");
-
-                    if (!File.Exists(fileName))
-                    {
-                        Logger.Instance.LogMessage(TracingLevel.ERROR, "steam file not found " + fileName);
-
-                        fileName = fileName.Replace(".4.2.binds", ".4.1.binds");
-
-                        if (!File.Exists(fileName))
-                        {
-                            Logger.Instance.LogMessage(TracingLevel.ERROR, "steam file not found " + fileName);
-
-                            fileName = fileName.Replace(".4.1.binds", ".4.0.binds");
-
-                            if (!File.Exists(fileName))
-                            {
-                                Logger.Instance.LogMessage(TracingLevel.ERROR, "steam file also not found " + fileName);
-
-                                fileName = fileName.Replace(".4.0.binds", ".3.0.binds");
-
-                                if (!File.Exists(fileName))
-                                {
-                                    Logger.Instance.LogMessage(TracingLevel.ERROR, "steam file also not found " + fileName);
-
-                                    fileName = fileName.Replace(".3.0.binds", ".binds");
-
-                                    if (!File.Exists(fileName))
-                                    {
-                                        Logger.Instance.LogMessage(TracingLevel.ERROR, "steam file also not found " + fileName);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // epic
-            if (!File.Exists(fileName))
-            {
-                bindingsPath = EpicPath.FindEpicEliteDirectory();
-
-                if (!string.IsNullOrEmpty(bindingsPath))
-                {
-                    fileName = Path.Combine(bindingsPath, bindsName + ".4.2.binds");
-
-                    if (!File.Exists(fileName))
-                    {
-                        Logger.Instance.LogMessage(TracingLevel.ERROR, "epic file not found " + fileName);
-
-                        fileName = fileName.Replace(".4.2.binds", ".4.1.binds");
-
-                        if (!File.Exists(fileName))
-                        {
-                            Logger.Instance.LogMessage(TracingLevel.ERROR, "epic file not found " + fileName);
-
-                            fileName = fileName.Replace(".4.1.binds", ".4.0.binds");
-
-                            if (!File.Exists(fileName))
-                            {
-                                Logger.Instance.LogMessage(TracingLevel.ERROR, "epic file also not found " + fileName);
-
-                                fileName = fileName.Replace(".4.0.binds", ".3.0.binds");
-
-                                if (!File.Exists(fileName))
-                                {
-                                    Logger.Instance.LogMessage(TracingLevel.ERROR, "epic file also not found " + fileName);
-
-                                    fileName = fileName.Replace(".3.0.binds", ".binds");
-
-                                    if (!File.Exists(fileName))
-                                    {
-                                        Logger.Instance.LogMessage(TracingLevel.ERROR, "epic file not found " + fileName);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            var fileName = BindingResolver.Find(bindingsPath, bindsName)
+                ?? BindingResolver.Find(SteamPath.FindSteamEliteDirectory(), bindsName)
+                ?? BindingResolver.Find(EpicPath.FindEpicEliteDirectory(), bindsName);
 
             if (File.Exists(fileName))
             {
                 var serializer = new XmlSerializer(typeof(UserBindings));
 
-                //Logger.Instance.LogMessage(TracingLevel.INFO, "using " + fileName);
+                Logger.Instance.LogMessage(TracingLevel.INFO, $"Using {bindingType} bindings: {fileName}");
 
                 var reader = new StreamReader(fileName);
                 Binding[bindingType] = (UserBindings)serializer.Deserialize(reader);
@@ -472,7 +360,7 @@ namespace Elite
 
                 Logger.Instance.LogMessage(TracingLevel.INFO, "monitoring key binding file name #2 " + keyBindingFileName);
 
-                KeyBindingWatcher[(int)bindingType] = new KeyBindingWatcher(keyBindingPath, keyBindingFileName);
+                KeyBindingWatcher[(int)bindingType] = new KeyBindingWatcher(keyBindingPath, "*.binds");
                 KeyBindingWatcher[(int)bindingType].KeyBindingUpdated += HandleKeyBindingEvents;
                 KeyBindingWatcher[(int)bindingType].StartWatching();
             }
@@ -509,27 +397,17 @@ namespace Elite
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"Directory found {bindingsPath}");
             }
 
-            var startPresetPath = Path.Combine(bindingsPath, "StartPreset.4.start");
-
-            if (!File.Exists(startPresetPath))
+            var startPresetPath = BindingResolver.FindStartPreset(bindingsPath);
+            if (startPresetPath == null)
             {
-                Logger.Instance.LogMessage(TracingLevel.INFO, $"StartPreset.4.start not found {startPresetPath}");
-
-                startPresetPath = Path.Combine(bindingsPath, "StartPreset.start");
-
-                if (!File.Exists(startPresetPath))
-                {
-                    Logger.Instance.LogMessage(TracingLevel.INFO, $"StartPreset.start also not found {startPresetPath}");
-                }
-            }
-            else
-            {
-                Logger.Instance.LogMessage(TracingLevel.INFO, $"StartPreset.4.start found {startPresetPath}");
+                Logger.Instance.LogMessage(TracingLevel.ERROR, "No active StartPreset marker found in " + bindingsPath);
+                return;
             }
 
             //Logger.Instance.LogMessage(TracingLevel.INFO, "bindings path " + bindingsPath);
 
             var bindsNames = ReadStartPreset(startPresetPath);
+            if (bindsNames == null || bindsNames.Length == 0) return;
 
             Logger.Instance.LogMessage(TracingLevel.INFO, "key bindings " + string.Join(",",bindsNames));
 
@@ -538,11 +416,11 @@ namespace Elite
             var keyBindingFileName = Path.GetFileName(startPresetPath);
 
             Logger.Instance.LogMessage(TracingLevel.INFO, "monitoring key binding file name #1 " + keyBindingFileName);
-            KeyBindingWatcherStartPreset = new KeyBindingWatcher(keyBindingPath, keyBindingFileName);
+            KeyBindingWatcherStartPreset = new KeyBindingWatcher(keyBindingPath, "StartPreset*.start");
             KeyBindingWatcherStartPreset.KeyBindingUpdated += HandleKeyBindingEvents;
             KeyBindingWatcherStartPreset.StartWatching();
 
-            if (bindsNames.Length == 4) // odyssey
+            if (bindsNames.Length >= 4) // Odyssey; tolerate additional future control categories.
             {
                 Logger.Instance.LogMessage(TracingLevel.INFO, "odyssey key bindings");
 

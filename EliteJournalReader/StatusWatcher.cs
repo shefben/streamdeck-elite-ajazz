@@ -21,7 +21,11 @@ namespace EliteJournalReader
         /// <summary>
         ///     The default filter
         /// </summary>
-        private const string DefaultFilter = @"Status*.json";
+        private const string DefaultFilter = @"Status.json";
+
+        private readonly object updateLock = new object();
+        private Timer pollTimer;
+        private JToken lastPayload;
 
         /// <summary>
         /// Token to signal that we are no longer watching
@@ -41,7 +45,7 @@ namespace EliteJournalReader
         protected void Initialize(string path)
         {
             Filter = DefaultFilter;
-            NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.LastWrite;
+            NotifyFilter = NotifyFilters.FileName | NotifyFilters.CreationTime | NotifyFilters.LastWrite | NotifyFilters.Size;
 
             try
             {
@@ -92,13 +96,24 @@ namespace EliteJournalReader
 
             Changed -= UpdateStatus;
             Changed += UpdateStatus;
+            Created -= UpdateStatus;
+            Created += UpdateStatus;
+            Renamed -= UpdateStatus;
+            Renamed += UpdateStatus;
+
+            EnableRaisingEvents = true;
 
             // start with reading any existing status
             string statusJsonPath = System.IO.Path.Combine(Path, "Status.json");
             if (File.Exists(statusJsonPath))
                 UpdateStatus(statusJsonPath, 0);
 
-            EnableRaisingEvents = true;
+            // Recover missed/overflowed filesystem notifications and atomic file replacement.
+            pollTimer = new Timer(_ =>
+            {
+                if (!cancellationTokenSource.IsCancellationRequested)
+                    UpdateStatus(statusJsonPath, 0);
+            }, null, 1000, 1000);
         }
 
         public virtual void StopWatching()
@@ -108,6 +123,10 @@ namespace EliteJournalReader
                 if (EnableRaisingEvents)
                 {
                     Changed -= UpdateStatus;
+                    Created -= UpdateStatus;
+                    Renamed -= UpdateStatus;
+                    pollTimer?.Dispose();
+                    pollTimer = null;
 
                     if (cancellationTokenSource != null)
                         cancellationTokenSource.Cancel();
@@ -124,26 +143,35 @@ namespace EliteJournalReader
 
         protected void UpdateStatus(object sender, FileSystemEventArgs e) => UpdateStatus(e.FullPath, 0);
 
-        private DateTime lastTimestamp = DateTime.MinValue;
         protected void UpdateStatus(string fullPath, int attempt)
+        {
+            lock (updateLock)
+            {
+                ReadStatus(fullPath, attempt);
+            }
+        }
+
+        private void ReadStatus(string fullPath, int attempt)
         {
             try
             {
                 //Thread.Sleep(50); // give it a wee bit
-                var streamReader = new StreamReader(new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+                using var streamReader = new StreamReader(new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete));
                 using (var jsonTextReader = new JsonTextReader(streamReader))
                 {
                     if (streamReader.EndOfStream)
-                        return; // nothing to read
+                        throw new IOException("Status.json is temporarily empty");
 
                     var jToken = JToken.ReadFrom(jsonTextReader);
                     var evt = jToken.ToObject<StatusFileEvent>() ?? throw new ArgumentNullException($"Unexpected empty status.json file");
                     evt.OriginalEvent = jToken;
 
                     // only fire the event if it's new data
-                    if (evt.Timestamp > lastTimestamp)
+                    // Timestamps have only second precision; multiple real changes can share one.
+                    // Also accept a new session after the system clock moves backwards.
+                    if (!JToken.DeepEquals(jToken, lastPayload))
                     {
-                        lastTimestamp = evt.Timestamp;
+                        lastPayload = jToken.DeepClone();
                         LastEvent = evt;
                         FireStatusUpdatedEvent(evt);
                     }
@@ -159,7 +187,7 @@ namespace EliteJournalReader
             catch (Exception)
             {
 #endif
-                FireFailedStatusUpdateEvent();
+                // Keep the last valid state when a write races this read.
             }
         }
 
@@ -168,12 +196,15 @@ namespace EliteJournalReader
             // it could be that we are trying to read at the exact same time the 
             // game is writing a new status.json. To handle this case, we simply give it another shot.
             if (attempt < 5)
-                UpdateStatus(fullPath, attempt + 1);
+            {
+                Thread.Sleep(25);
+                ReadStatus(fullPath, attempt + 1);
+            }
             else
             {
                 Trace.TraceWarning($"{ex.GetType().Name} while reading from status.json: {ex.Message}");
                 Trace.TraceInformation(ex.StackTrace);
-                FireFailedStatusUpdateEvent();
+                // The next notification or poll retries; never invent an all-off status.
             }
         }
 
@@ -191,6 +222,17 @@ namespace EliteJournalReader
                 Flags = StatusFlags.None,
                 Flags2 = MoreStatusFlags.InMulticrew & MoreStatusFlags.PhysicalMulticrew & MoreStatusFlags.TelepresenceMulticrew,
             });
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                StopWatching();
+                pollTimer?.Dispose();
+                cancellationTokenSource?.Cancel();
+            }
+            base.Dispose(disposing);
         }
     }
 

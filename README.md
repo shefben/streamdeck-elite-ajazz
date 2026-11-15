@@ -11,6 +11,34 @@ Latest Release: https://github.com/SlayerNZ/streamdeck-elite
 
 ## 🆕 Ajazz / Mirabox Stream Dock support (AKP153E)
 
+### Game updates, keyboard bindings, and live icons
+
+The plugin discovers binding versions from the XML `PresetName`, `MajorVersion`, and
+`MinorVersion` attributes, including presets saved under a different filename. It uses
+the most recently written `StartPreset*.start` marker and reloads when binding files
+are changed, created, or replaced. New binding format versions no longer require a
+hard-coded plugin update. Game changes to the meaning of controls or telemetry can
+still require compatibility work.
+
+Commands need a **keyboard** binding in the active controls preset; joystick-only
+bindings cannot be sent by the plugin. With Elite closed, run
+`python tools/repair-keyboard-bindings.py` to audit the active ship preset, then add
+`--apply` to fill empty slots for power, gear, lights, shield cells, and camera back.
+The tool preserves joystick bindings, chooses unused Ctrl+Shift+function-key chords,
+and backs up files outside the game's scanned Bindings folder.
+
+Use **Toggle Button** for lights, gear, maps, and other controls whose icon should
+reflect game state. Static Button always displays a static image. Power dots now use
+only `Status.json` telemetry. The reader accepts multiple changes in one second,
+handles file replacement, polls to recover missed notifications, and keeps the last
+valid state during incomplete writes.
+
+Regression checks: `dotnet run --project tools/RegressionTests/RegressionTests.csproj`.
+For real plugin image/protocol checks, close Elite and Stream Dock and run
+`python tools/test-streamdock-protocol.py` (requires `websockets`). This temporarily
+uses status fixtures, restores the original status file, and saves before/after images
+in the printed temporary directory. It never sends keyboard input.
+
 The plugin now runs properly on **Ajazz / Mirabox Stream Dock** decks — the **AKP153E** in
 particular — with the compatibility gaps fixed and **automatic profile switching, which Stream Dock
 does not support on its own, made to work** through a small in-process bridge. Everything is

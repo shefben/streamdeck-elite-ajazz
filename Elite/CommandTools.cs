@@ -566,11 +566,13 @@ namespace Elite
         {
             var inputText = "";
 
-            if (keyInfo.Primary.Device == "Keyboard")
+            if (keyInfo == null) return inputText;
+
+            if (keyInfo.Primary?.Device == "Keyboard" && !string.IsNullOrEmpty(keyInfo.Primary.Key))
             {
                 inputText =
                     "{" + keyInfo.Primary.Key.Replace("Key_", "DIK") + "}";
-                foreach (var m in keyInfo.Primary.Modifier)
+                foreach (var m in keyInfo.Primary.Modifier ?? new List<Binding>())
                 {
                     if (m.Device == "Keyboard")
                     {
@@ -581,11 +583,11 @@ namespace Elite
                 }
 
             }
-            else if (keyInfo.Secondary.Device == "Keyboard")
+            else if (keyInfo.Secondary?.Device == "Keyboard" && !string.IsNullOrEmpty(keyInfo.Secondary.Key))
             {
                 inputText =
                     "{" + keyInfo.Secondary.Key.Replace("Key_", "DIK") + "}";
-                foreach (var m in keyInfo.Secondary.Modifier)
+                foreach (var m in keyInfo.Secondary.Modifier ?? new List<Binding>())
                 {
                     if (m.Device == "Keyboard")
                     {

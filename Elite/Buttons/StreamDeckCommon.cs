@@ -575,20 +575,26 @@ namespace Elite.Buttons
         private static async void SendInput(string inputText)
         {
             InputRunning = true;
-            await Task.Run(() =>
+            try
             {
-                var text = inputText;
-
-                for (var idx = 0; idx < text.Length && !ForceStop; idx++)
+                await Task.Run(() =>
                 {
-                    var macro = CommandTools.ExtractMacro(text, idx);
-                    idx += macro.Length - 1;
-                    macro = macro.Substring(1, macro.Length - 2);
-
-                    CommandTools.HandleMacro(macro);
-                }
-            });
-            InputRunning = false;
+                    var text = inputText;
+                    for (var idx = 0; idx < text.Length && !ForceStop; idx++)
+                    {
+                        var macro = CommandTools.ExtractMacro(text, idx);
+                        if (macro == null) throw new ArgumentException("Invalid keyboard macro: " + text);
+                        idx += macro.Length - 1;
+                        macro = macro.Substring(1, macro.Length - 2);
+                        CommandTools.HandleMacro(macro);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.LogMessage(TracingLevel.ERROR, $"Keyboard input failed: {ex.Message}");
+            }
+            finally { InputRunning = false; }
         }
 
 
@@ -641,6 +647,11 @@ namespace Elite.Buttons
                 }
 
                 // keyboard test page : https://w3c.github.io/uievents/tools/key-event-viewer.html
+            }
+            else
+            {
+                Logger.Instance.LogMessage(TracingLevel.WARN,
+                    "Command has no keyboard binding in the active game preset. Assign a keyboard binding in Elite controls; joystick-only commands cannot be simulated.");
             }
 
         }
