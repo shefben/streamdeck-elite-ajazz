@@ -116,6 +116,36 @@ This release upgrades the plugin's underlying `EliteJournalReader` library (the 
 
 ---
 
+## New & Update Features (v4.2.3)
+
+Jump Range is now exact, and it matches the game. Everything here was measured in game rather than calculated and hoped for, across a full tank down to 2.3 tonnes.
+
+---
+
+### 🚀 ✏️ Updated: Jump Range is exact, and matches the game's own figure
+
+Jump Range is now modelled from your ship's real Frame Shift Drive, using the published stats for all 66 drives plus your engineering modifiers and a powered Guardian FSD Booster. Three things were wrong before:
+
+- **Supercruise Overcharge drives used the wrong fuel constants.** The old calculation derived them from the drive's rating, which is correct for standard drives but wrong for every SCO drive, by up to 50%. Displayed range mostly survived this, but the figures sent to the Spansh plotter did not, which is how a route could contain an opening hop you could not actually make.
+- **The per-jump fuel cap was ignored.** A drive can only burn so much fuel in one jump, so once your main tank drops below that the range really does collapse. The old figure did not, and over-reported by more than 20 LY at 2.3 tonnes of fuel: worst exactly when running out of fuel is the thing you are worried about.
+- **The fuel reservoir was not counted.** It contributes both to your ship's mass and to the fuel a single jump can draw on.
+
+Unengineered drives are now modelled too. Previously a stock drive had no fuel model at all and could not be used for Auto Plot, which reported `NO SHIP`.
+
+> Jump Range now agrees with the game's own readout. If you compare the two and see a small difference, check your fuel reservoir level first: a full versus empty reservoir moves the range by about 0.06 LY at a full tank.
+
+### 🧭 🔧 Fixed: Advanced Route drew nothing without a background image
+
+The Advanced Route button only rendered if you had configured a background image. With none set it showed Stream Deck's default icon and looked like a dead button. It now draws its own black background, matching the other information buttons.
+
+Worse, and also fixed: with no "No Route" image set, clearing your route left the button **frozen displaying the previous route's values**. A blank button is annoying; one still showing old numbers as though they were current is misleading. It now shows a `NO ROUTE` placeholder.
+
+### 🧭 ✏️ Updated: Advanced Route now shows the same Jump Range as the other buttons
+
+Advanced Route had its own separate estimate that ignored the per-jump fuel cap, so it could disagree with the Neutron Plot and Nav Info buttons on the same deck. All three now use one shared calculation.
+
+---
+
 ## New & Update Features (v4.2.1)
 
 A bug-fix release. One of these had been silently breaking shipped features since v4.2.0, so it is worth updating even if nothing looked wrong.
@@ -273,6 +303,16 @@ Three display styles to suit your layout:
 
 Each row has its own colour, and a configurable **Boost Color** highlights the Jump Range when you've supercharged.
 
+> **Why Jump Range reads slightly lower than the game.** This is deliberate, and it is not an error.
+>
+> The figure is calculated from your ship's actual Frame Shift Drive (its published stats, your engineering modifiers, and a powered Guardian FSD Booster) against your live fuel and cargo mass. It has been validated in game across a full tank down to 2.3 tonnes and agrees with the game's own readout to a few hundredths of a light year.
+>
+> On top of that it adds **one tonne of phantom mass**, so the number always sits a little under what the game reports. The reason is that this readout is for planning long-distance travel, where over-estimating your range is how you end up stranded short of a fuel star. Reading slightly under costs you nothing you would ever notice; reading slightly over can cost you a jump you cannot make.
+>
+> How much it costs depends on how heavy your ship is: roughly **0.05 LY** on a heavy explorer such as a Caspian or Anaconda, and up to about **0.3 LY** on a light long-range ship such as a Mandalay. It matters most where the stakes are highest, because the margin is applied before the neutron multiplier, so a 6x supercharge turns 0.05 LY into roughly 0.37 LY of headroom on a 490 LY hop.
+>
+> One thing to watch when comparing readings: the **fuel reservoir** counts both toward your mass and toward the fuel a jump can draw on, and a full versus empty reservoir moves the range by about 0.06 LY at a full tank. That is close enough to the safety margin to be mistaken for it, so check your reservoir level before concluding the two numbers disagree.
+
 #### Plotting a route
 
 **1. The normal case.** Target the system you want in the Galaxy Map, then trigger **Auto Plot**. That is all that is needed whenever Spansh knows both ends of the route, which covers most of travelled space.
@@ -350,6 +390,8 @@ It's a two-row, labelled display purpose-built for everyday A-to-B travel and re
 | Est. Jumps in Tank | how many jumps your current fuel will last |
 
 Each row has its own colour, plus a **Boost Color** for the Jump Range.
+
+> **Note:** Jump Range uses the same calculation as the Neutron Plot Route button, including the deliberate one tonne safety margin that makes it read slightly under the game's own figure. See "Why Jump Range reads slightly lower than the game" in the Neutron Plot Route section above.
 
 ---
 
