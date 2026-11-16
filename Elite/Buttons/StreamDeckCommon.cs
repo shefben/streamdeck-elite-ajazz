@@ -337,7 +337,58 @@ namespace Elite.Buttons
 
         }
 
+        // Profile switching used to run only from a button's OnTick. A profile with no Elite
+        // buttons on it (an empty "Elite InSRV" / "Elite InFighter", or any non-Elite profile)
+        // never ticks, so once the deck switched there it could never switch back out. Remember
+        // the last connection seen for each device and drive switching from our own timer too.
+        // SDConnection.Dispose only unhooks events; its StreamDeckConnection (the shared plugin
+        // websocket) stays valid, so a remembered connection can still send switchToProfile
+        // after the button that supplied it has disappeared.
+        private static readonly Dictionary<string, ISDConnection> _connections = new Dictionary<string, ISDConnection>();
+        private static readonly object _connectionsLock = new object();
+        private static Timer _profileTimer;
+
+        public static void StartProfileSwitchTimer()
+        {
+            if (_profileTimer != null) return;
+
+            _profileTimer = new Timer(_ =>
+            {
+                List<ISDConnection> connections;
+
+                lock (_connectionsLock)
+                {
+                    connections = _connections.Values.ToList();
+                }
+
+                foreach (var connection in connections)
+                {
+                    try
+                    {
+                        SwitchProfileForState(connection);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Instance.LogMessage(TracingLevel.ERROR, $"Profile switch timer: {ex.Message}");
+                    }
+                }
+            }, null, 1000, 1000);
+        }
+
         public static void HandleOnTick(ISDConnection connection)
+        {
+            var key = connection?.DeviceId ?? "";
+
+            lock (_connectionsLock)
+            {
+                _connections[key] = connection;
+            }
+
+            // The timer does the switching, so it keeps running when no button is visible.
+            if (_profileTimer == null) SwitchProfileForState(connection);
+        }
+
+        private static void SwitchProfileForState(ISDConnection connection)
         {
             lock (myLock)
             {

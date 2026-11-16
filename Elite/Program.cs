@@ -1135,6 +1135,8 @@ namespace Elite
 
             Profile.ReadHostDevices(args);
 
+            Buttons.StreamDeckCommon.StartProfileSwitchTimer();
+
 
             SDWrapper.Run(args);
         }
