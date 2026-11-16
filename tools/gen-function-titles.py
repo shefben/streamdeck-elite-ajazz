@@ -9,6 +9,9 @@ SOURCES = {
     'uinavigation': 'UiNavigation.html',
     'static': 'Static.html',
     'toggle': 'Toggle.html',
+    'onfootstatic': 'OnFootStatic.html',
+    'srvstatic': 'SrvStatic.html',
+    'colonisationstatic': 'ColonisationStatic.html',
 }
 
 OPT = re.compile(r'<option\s+value="([^"]*)"\s*>(.*?)</option>', re.S | re.I)

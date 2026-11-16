@@ -1088,6 +1088,9 @@ namespace Elite
 
                 JournalWatcher.MessageReceived += EliteData.HandleEliteEvents;
 
+                // Missions, carrier, colonisation depot, docking, target and fuel scoop boards.
+                JournalWatcher.MessageReceived += InfoBoardData.HandleEliteEvents;
+
                 JournalWatcher.StartWatching().Wait();
 
                 // Recover the current ship's fuel model if the current session logged no Loadout
@@ -1106,6 +1109,9 @@ namespace Elite
                 // is plotted, so a route plotted in an earlier session would otherwise leave
                 // RouteAdv's Next System / Destination options stuck at 0.0 ly forever.
                 BackfillRouteState(journalPath);
+
+                // Missions / carrier / depot state from earlier sessions for the info boards.
+                InfoBoardData.Backfill(journalPath);
 
                 // Watch journal for FSSBodySignals and SAASignalsFound independently
                 WatchJournalForSignals(journalPath);

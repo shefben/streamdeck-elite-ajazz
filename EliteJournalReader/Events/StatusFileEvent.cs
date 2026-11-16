@@ -41,7 +41,8 @@ namespace EliteJournalReader.Events
 
         public double PlanetRadius { get; set; }
 
-        public long Balance { get; set; }
+        // Only present in some states (absent in the main menu / multicrew), so keep "missing" distinct from 0.
+        public long? Balance { get; set; }
 
         public Destination Destination { get; set; }
 
@@ -102,6 +103,7 @@ namespace EliteJournalReader.Events
         public long System { get; set; }
         public int Body { get; set; }
         public string Name { get; set; }
+        public string Name_Localised { get; set; }
     }
 
     [Flags]

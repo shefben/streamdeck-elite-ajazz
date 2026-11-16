@@ -261,6 +261,9 @@ namespace Elite
             public string SelectedWeapon { get; set; }
             public double Temperature { get; set; }
             public string DestinationName { get; set; }
+            public string DestinationDisplayName { get; set; }  // localised name when the game gives one
+            public int DestinationBody { get; set; }
+            public long? Balance { get; set; }
 
             // Numeric on-foot suit/environment readings from status.json
             // Oxygen and Health are 0.0–1.0 (multiply by 100 for %)
@@ -467,6 +470,9 @@ namespace Elite
             StatusData.SelectedWeapon = evt.SelectedWeapon;
             StatusData.Temperature = evt.Temperature;
             StatusData.DestinationName = evt.Destination?.Name ?? string.Empty;
+            StatusData.DestinationDisplayName = !string.IsNullOrEmpty(evt.Destination?.Name_Localised) ? evt.Destination.Name_Localised : (evt.Destination?.Name ?? string.Empty);
+            StatusData.DestinationBody = evt.Destination?.Body ?? 0;
+            StatusData.Balance = evt.Balance;
             StatusData.Oxygen = evt.Oxygen;
             StatusData.Health = evt.Health;
             StatusData.Gravity = evt.Gravity;

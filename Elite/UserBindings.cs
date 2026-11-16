@@ -434,6 +434,27 @@ namespace Elite
         public StandardBindingInfo HumanoidToggleFlashlightButton { get; set; }
         public StandardBindingInfo HumanoidToggleNightVisionButton { get; set; }
         public StandardBindingInfo HumanoidToggleShieldsButton { get; set; }
+        public StandardBindingInfo HumanoidPulseScanButton { get; set; }
+
+        // Colonisation (Trailblazers) - settlement placement camera and construction.
+        public StandardBindingInfo TriggerColonisationModule { get; set; }
+        public StandardBindingInfo PlaceSettlement { get; set; }
+        public StandardBindingInfo ChangeConstructionOption { get; set; }
+        public StandardBindingInfo RotateSettlementLeft { get; set; }
+        public StandardBindingInfo RotateSettlementRight { get; set; }
+        public StandardBindingInfo ExitSettlementPlacementCamera { get; set; }
+        public StandardBindingInfo MovePlacementCamForward { get; set; }
+        public StandardBindingInfo MovePlacementCamBackwards { get; set; }
+        public StandardBindingInfo MovePlacementCamLeft { get; set; }
+        public StandardBindingInfo MovePlacementCamRight { get; set; }
+        public StandardBindingInfo MovePlacementCamUp { get; set; }
+        public StandardBindingInfo MovePlacementCamDown { get; set; }
+        public StandardBindingInfo PitchPlacementCameraUp { get; set; }
+        public StandardBindingInfo PitchPlacementCameraDown { get; set; }
+        public StandardBindingInfo YawPlacementCameraLeft { get; set; }
+        public StandardBindingInfo YawPlacementCameraRight { get; set; }
+        public StandardBindingInfo PlacementCamSpeedInc { get; set; }
+        public StandardBindingInfo PlacementCamSpeedDec { get; set; }
         public StandardBindingInfo HumanoidSwitchToRechargeTool { get; set; }
         public StandardBindingInfo HumanoidSwitchToCompAnalyser { get; set; }
         public StandardBindingInfo HumanoidSwitchToSuitTool { get; set; }

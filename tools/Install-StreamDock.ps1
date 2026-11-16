@@ -60,6 +60,15 @@ $informationActions = @(
     'com.mhwlng.elite.odysseyshipstatus'
     'com.mhwlng.elite.planetinfo'
     'com.mhwlng.elite.shipstatus'
+    'com.mhwlng.elite.legalbalance'
+    'com.mhwlng.elite.destination'
+    'com.mhwlng.elite.suitvitals'
+    'com.mhwlng.elite.missions'
+    'com.mhwlng.elite.carrier'
+    'com.mhwlng.elite.colonisationdepot'
+    'com.mhwlng.elite.docking'
+    'com.mhwlng.elite.targetinfo'
+    'com.mhwlng.elite.fuelscoop'
 )
 
 function Get-StreamDockExe {

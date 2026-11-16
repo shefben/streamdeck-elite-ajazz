@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+    <title>Mhwlng's Elite</title>
+    <link rel="stylesheet" href="../sdpi.css">
+    <link rel="stylesheet" href="../jquery.highlight-within-textarea.css">
+    <script src="../sdtools.common.js"></script>
+    <script src="../jquery-3.3.1.min.js"></script>
+    <script src="../jquery.highlight-within-textarea.js"></script>
+</head>
+<body>
+<div class="sdpi-wrapper">
+
+    <div class="sdpi-item" id="select_single">
+        <div class="sdpi-item-label">Function</div>
+        <select class="sdpi-item-value select sdProperty" id="function" oninput="setSettings()">
+            <optgroup label="Construction">
+                <option value="TriggerColonisationModule">Colonisation Module</option>
+                <option value="PlaceSettlement">Place Settlement</option>
+                <option value="ChangeConstructionOption">Next Construction Option</option>
+                <option value="RotateSettlementLeft">Rotate Left</option>
+                <option value="RotateSettlementRight">Rotate Right</option>
+                <option value="ExitSettlementPlacementCamera">Exit Placement Camera</option>
+            </optgroup>
+            <optgroup label="Placement Camera (hold)">
+                <option value="MovePlacementCamForward">Camera Forward</option>
+                <option value="MovePlacementCamBackwards">Camera Back</option>
+                <option value="MovePlacementCamLeft">Camera Left</option>
+                <option value="MovePlacementCamRight">Camera Right</option>
+                <option value="MovePlacementCamUp">Camera Up</option>
+                <option value="MovePlacementCamDown">Camera Down</option>
+                <option value="PitchPlacementCameraUp">Camera Pitch Up</option>
+                <option value="PitchPlacementCameraDown">Camera Pitch Down</option>
+                <option value="YawPlacementCameraLeft">Camera Yaw Left</option>
+                <option value="YawPlacementCameraRight">Camera Yaw Right</option>
+            </optgroup>
+            <optgroup label="Placement Camera Speed">
+                <option value="PlacementCamSpeedInc">Camera Speed Up</option>
+                <option value="PlacementCamSpeedDec">Camera Speed Down</option>
+            </optgroup>
+        </select>
+    </div>
+
+    <div class="sdpi-item" id="dvPrimaryImage">
+        <div class="sdpi-item-label" onclick="clearFileName('primaryImage');">On Image</div>
+        <div class="sdpi-item-group file" id="filepickergroup1">
+            <input class="sdpi-item-value sdProperty sdFile" type="file" id="primaryImage" accept=".jpg, .jpeg, .png, .ico, .gif, .bmp, .tiff" oninput="setSettings()">
+            <label class="sdpi-file-info " for="primaryImage" id="primaryImageFilename">No file...</label>
+            <label class="sdpi-file-label" for="primaryImage">Choose file...</label>
+        </div>
+    </div>
+
+    <div class="sdpi-item" id="dvSecondaryImage">
+        <div class="sdpi-item-label" onclick="clearFileName('secondaryImage');">Off Image</div>
+        <div class="sdpi-item-group file" id="filepickergroup2">
+            <input class="sdpi-item-value sdProperty sdFile" type="file" id="secondaryImage" accept=".jpg, .jpeg, .png, .ico, .gif, .bmp, .tiff" oninput="setSettings()">
+            <label class="sdpi-file-info " for="secondaryImage" id="secondaryImageFilename">No file...</label>
+            <label class="sdpi-file-label" for="secondaryImage">Choose file...</label>
+        </div>
+    </div>
+
+    <div class="sdpi-item" id="dvClickSound">
+        <div class="sdpi-item-label" onclick="clearFileName('clickSound');">Sound</div>
+        <div class="sdpi-item-group file" id="filepickergroup3">
+            <input class="sdpi-item-value sdProperty sdFile" type="file" id="clickSound" accept=".wav" oninput="setSettings()">
+            <label class="sdpi-file-info " for="clickSound" id="clickSoundFilename">No file...</label>
+            <label class="sdpi-file-label" for="clickSound">Choose file...</label>
+        </div>
+    </div>
+
+    <div class="sdpi-item">
+        <details class="message info">
+            <summary>When does it show On?</summary>
+            <p>Colonisation Module shows On while flying your ship. The placement commands show On while the settlement placement camera is open - entered with this plugin's Colonisation Module key and left with Exit / Place Settlement. Camera movement keys are held while the Stream Deck key is held.</p>
+        </details>
+    </div>
+
+</div>
+</body>
+</html>

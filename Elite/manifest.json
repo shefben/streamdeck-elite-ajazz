@@ -547,6 +547,222 @@
       "Tooltip": "Elite Dangerous Neutron Highway route planner (dial)",
       "UUID": "com.mhwlng.elite.neutronplotdial",
       "PropertyInspectorPath": "PropertyInspector/Elite/NeutronPlotDial.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "On Foot Static Button",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "Images/Default",
+          "TitleAlignment": "bottom",
+          "FontSize": "8"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Elite Dangerous on-foot suit commands with On/Off images",
+      "UUID": "com.mhwlng.elite.onfootstatic",
+      "PropertyInspectorPath": "PropertyInspector/Elite/OnFootStatic.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "SRV Static Button",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "Images/Default",
+          "TitleAlignment": "bottom",
+          "FontSize": "8"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Elite Dangerous SRV commands with On/Off images",
+      "UUID": "com.mhwlng.elite.srvstatic",
+      "PropertyInspectorPath": "PropertyInspector/Elite/SrvStatic.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Colonisation Static Button",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "Images/Default",
+          "TitleAlignment": "bottom",
+          "FontSize": "8"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Elite Dangerous colonisation and settlement placement commands with On/Off images",
+      "UUID": "com.mhwlng.elite.colonisationstatic",
+      "PropertyInspectorPath": "PropertyInspector/Elite/ColonisationStatic.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Legal State / Balance",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "Images/Default",
+          "TitleAlignment": "middle",
+          "FontSize": "8"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Info board - legal state and credit balance",
+      "UUID": "com.mhwlng.elite.legalbalance",
+      "PropertyInspectorPath": "PropertyInspector/Elite/LegalBalance.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Destination",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "Images/Default",
+          "TitleAlignment": "middle",
+          "FontSize": "8"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Info board - the locked destination",
+      "UUID": "com.mhwlng.elite.destination",
+      "PropertyInspectorPath": "PropertyInspector/Elite/Destination.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Suit Vitals",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "Images/Default",
+          "TitleAlignment": "middle",
+          "FontSize": "8"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Info board - oxygen, health, temperature and gravity on foot",
+      "UUID": "com.mhwlng.elite.suitvitals",
+      "PropertyInspectorPath": "PropertyInspector/Elite/SuitVitals.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Missions",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "Images/Default",
+          "TitleAlignment": "middle",
+          "FontSize": "8"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Info board - active missions and the next to expire",
+      "UUID": "com.mhwlng.elite.missions",
+      "PropertyInspectorPath": "PropertyInspector/Elite/Missions.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Fleet Carrier",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "Images/Default",
+          "TitleAlignment": "middle",
+          "FontSize": "8"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Info board - carrier jump countdown, tritium and balance",
+      "UUID": "com.mhwlng.elite.carrier",
+      "PropertyInspectorPath": "PropertyInspector/Elite/Carrier.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Colonisation Depot",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "Images/Default",
+          "TitleAlignment": "middle",
+          "FontSize": "8"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Info board - construction progress and commodities still needed",
+      "UUID": "com.mhwlng.elite.colonisationdepot",
+      "PropertyInspectorPath": "PropertyInspector/Elite/ColonisationDepot.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Docking",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "Images/Default",
+          "TitleAlignment": "middle",
+          "FontSize": "8"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Info board - docking request state and landing pad",
+      "UUID": "com.mhwlng.elite.docking",
+      "PropertyInspectorPath": "PropertyInspector/Elite/Docking.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Target Info",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "Images/Default",
+          "TitleAlignment": "middle",
+          "FontSize": "8"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Info board - the locked ship target",
+      "UUID": "com.mhwlng.elite.targetinfo",
+      "PropertyInspectorPath": "PropertyInspector/Elite/TargetInfo.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Fuel Scoop",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "Images/Default",
+          "TitleAlignment": "middle",
+          "FontSize": "8"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Info board - fuel level, scoop rate and time to full",
+      "UUID": "com.mhwlng.elite.fuelscoop",
+      "PropertyInspectorPath": "PropertyInspector/Elite/FuelScoop.html"
     }
   ],
   "Author": "mhwlng, DrFr33ze, macrossmerrell, SlayerNZ",

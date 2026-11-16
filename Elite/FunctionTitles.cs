@@ -349,6 +349,41 @@ namespace Elite
                     ["FocusRightPanel"] = "Systems Panel",
                     ["HumanoidSwitchToSuitTool"] = "Genetic Sampler",
                 },
+            ["onfootstatic"] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["HumanoidPulseScanButton"] = "Pulse Scan",
+                    ["HumanoidBattery"] = "Use Energy Cell",
+                    ["HumanoidToggleFlashlightButton"] = "Flashlight",
+                    ["HumanoidToggleShieldsButton"] = "Suit Shield",
+                },
+            ["srvstatic"] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["SelectTarget_Buggy"] = "Target Ahead",
+                    ["EjectAllCargo_Buggy"] = "Eject All Cargo",
+                    ["ToggleCargoScoop_Buggy"] = "Cargo Scoop",
+                    ["HeadlightsBuggyButton"] = "Headlights",
+                },
+            ["colonisationstatic"] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["TriggerColonisationModule"] = "Colonisation Module",
+                    ["PlaceSettlement"] = "Place Settlement",
+                    ["ChangeConstructionOption"] = "Next Construction Option",
+                    ["RotateSettlementLeft"] = "Rotate Left",
+                    ["RotateSettlementRight"] = "Rotate Right",
+                    ["ExitSettlementPlacementCamera"] = "Exit Placement Camera",
+                    ["MovePlacementCamForward"] = "Camera Forward",
+                    ["MovePlacementCamBackwards"] = "Camera Back",
+                    ["MovePlacementCamLeft"] = "Camera Left",
+                    ["MovePlacementCamRight"] = "Camera Right",
+                    ["MovePlacementCamUp"] = "Camera Up",
+                    ["MovePlacementCamDown"] = "Camera Down",
+                    ["PitchPlacementCameraUp"] = "Camera Pitch Up",
+                    ["PitchPlacementCameraDown"] = "Camera Pitch Down",
+                    ["YawPlacementCameraLeft"] = "Camera Yaw Left",
+                    ["YawPlacementCameraRight"] = "Camera Yaw Right",
+                    ["PlacementCamSpeedInc"] = "Camera Speed Up",
+                    ["PlacementCamSpeedDec"] = "Camera Speed Down",
+                },
             };
 
         /// <summary>

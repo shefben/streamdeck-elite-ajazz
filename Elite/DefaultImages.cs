@@ -63,6 +63,52 @@ namespace Elite
                 ["onFootInStationImage"] = "Wireframe/On Foot"
             };
 
+        private const string Generated = "Generated/";
+
+        /// <summary>Info board plates, shared by every board.</summary>
+        private static readonly Dictionary<string, string> InfoBoardImages =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["primaryImage"] = Generated + "Board-Active",
+                ["defaultImage"] = Generated + "Board-Inactive",
+                ["alertImage"] = Generated + "Board-Alert"
+            };
+
+        /// <summary>
+        /// On Foot / SRV / Colonisation static buttons: an On and Off image per function, generated
+        /// by tools/gen-new-button-art.py in the RobManders toggle style.
+        /// </summary>
+        private static readonly Dictionary<string, string> StateStaticByFunction =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["HumanoidPulseScanButton"] = "OnFoot-Pulse-Scan",
+                ["HumanoidBattery"] = "OnFoot-Energy-Cell",
+                ["HumanoidToggleFlashlightButton"] = "OnFoot-Flashlight",
+                ["HumanoidToggleShieldsButton"] = "OnFoot-Shield",
+                ["SelectTarget_Buggy"] = "SRV-Target-Ahead",
+                ["EjectAllCargo_Buggy"] = "SRV-Eject-Cargo",
+                ["ToggleCargoScoop_Buggy"] = "SRV-Cargo-Scoop",
+                ["HeadlightsBuggyButton"] = "SRV-Headlights",
+                ["TriggerColonisationModule"] = "Col-Trigger-Module",
+                ["PlaceSettlement"] = "Col-Place-Settlement",
+                ["ChangeConstructionOption"] = "Col-Change-Option",
+                ["RotateSettlementLeft"] = "Col-Rotate-Left",
+                ["RotateSettlementRight"] = "Col-Rotate-Right",
+                ["ExitSettlementPlacementCamera"] = "Col-Exit-Camera",
+                ["PlacementCamSpeedInc"] = "Col-Cam-Speed-Up",
+                ["PlacementCamSpeedDec"] = "Col-Cam-Speed-Down",
+                ["MovePlacementCamForward"] = "Col-Cam-Forward",
+                ["MovePlacementCamBackwards"] = "Col-Cam-Back",
+                ["MovePlacementCamLeft"] = "Col-Cam-Left",
+                ["MovePlacementCamRight"] = "Col-Cam-Right",
+                ["MovePlacementCamUp"] = "Col-Cam-Up",
+                ["MovePlacementCamDown"] = "Col-Cam-Down",
+                ["PitchPlacementCameraUp"] = "Col-Cam-Pitch-Up",
+                ["PitchPlacementCameraDown"] = "Col-Cam-Pitch-Down",
+                ["YawPlacementCameraLeft"] = "Col-Cam-Yaw-Left",
+                ["YawPlacementCameraRight"] = "Col-Cam-Yaw-Right"
+            };
+
         private static readonly Dictionary<string, Dictionary<string, string>> ByAction =
             new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase)
             {
@@ -173,6 +219,17 @@ namespace Elite
                 {
                     ["backgroundImage"] = "Deep Space"
                 },
+
+                // Info boards: one plate per state; the text is drawn on top.
+                ["legalbalance"] = InfoBoardImages,
+                ["destination"] = InfoBoardImages,
+                ["suitvitals"] = InfoBoardImages,
+                ["missions"] = InfoBoardImages,
+                ["carrier"] = InfoBoardImages,
+                ["colonisationdepot"] = InfoBoardImages,
+                ["docking"] = InfoBoardImages,
+                ["targetinfo"] = InfoBoardImages,
+                ["fuelscoop"] = InfoBoardImages,
 
                 // Fallback plate for a function with no artwork of its own; the auto title
                 // supplies the meaning.
@@ -507,6 +564,13 @@ namespace Elite
             {
                 case "toggle":
                     if (!ToggleByFunction.TryGetValue(function, out pair)) return null;
+                    break;
+
+                case "onfootstatic":
+                case "srvstatic":
+                case "colonisationstatic":
+                    if (!StateStaticByFunction.TryGetValue(function, out var stem)) return null;
+                    pair = (Generated + stem + "_ON", Generated + stem + "_OFF");
                     break;
 
                 case "alarm":
